@@ -1,61 +1,133 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import React, { useEffect } from 'react';
+import { View, Text, StyleSheet, Dimensions } from 'react-native';
 import { Image } from 'expo-image';
 import Animated, { 
   useSharedValue, 
   useAnimatedStyle, 
-  withRepeat, 
   withTiming,
-  Easing 
+  withDelay,
+  Easing,
+  runOnJS
 } from 'react-native-reanimated';
+import { Ionicons } from '@expo/vector-icons';
 
 const PlaceholderImage = require("../assets/images/white2.jpg");
+const { width, height } = Dimensions.get('window');
 
-export default function Preloader() {
-  const rotation = useSharedValue(0);
-  const opacity = useSharedValue(0.3);
+type PreloaderProps = {
+  onFinish: () => void;
+};
 
-  React.useEffect(() => {
-    rotation.value = withRepeat(
-      withTiming(360, {
-        duration: 2000,
-        easing: Easing.linear,
-      }),
-      -1
-    );
-    
-    opacity.value = withRepeat(
-      withTiming(1, {
-        duration: 1000,
-        easing: Easing.inOut(Easing.ease),
-      }),
-      -1,
-      true
-    );
+export default function Preloader({ onFinish }: PreloaderProps) {
+  const welcomeOpacity = useSharedValue(0);
+  const iconsOpacity = useSharedValue(0);
+  const iconsScale = useSharedValue(0.5);
+
+  useEffect(() => {
+    // Показываем приветствие
+    welcomeOpacity.value = withTiming(1, {
+      duration: 800,
+      easing: Easing.out(Easing.ease),
+    });
+
+    // Через 3 секунды скрываем приветствие и показываем иконки
+    setTimeout(() => {
+      welcomeOpacity.value = withTiming(0, {
+        duration: 500,
+        easing: Easing.in(Easing.ease),
+      });
+
+      // Показываем иконки с задержкой
+      iconsOpacity.value = withDelay(600, withTiming(1, {
+        duration: 800,
+        easing: Easing.out(Easing.ease),
+      }));
+
+      iconsScale.value = withDelay(600, withTiming(1, {
+        duration: 800,
+        easing: Easing.out(Easing.back(1.2)),
+      }));
+
+      // Завершаем через 2 секунды после показа иконок
+      setTimeout(() => {
+        runOnJS(onFinish)();
+      }, 2800);
+    }, 3000);
   }, []);
 
-  const animatedStyle = useAnimatedStyle(() => {
+  const welcomeAnimatedStyle = useAnimatedStyle(() => {
     return {
-      transform: [{ rotate: `${rotation.value}deg` }],
-      opacity: opacity.value,
+      opacity: welcomeOpacity.value,
+    };
+  });
+
+  const iconsAnimatedStyle = useAnimatedStyle(() => {
+    return {
+      opacity: iconsOpacity.value,
+      transform: [{ scale: iconsScale.value }],
     };
   });
 
   return (
     <View style={styles.container}>
-      <View style={styles.imageContainer}>
-        <Image source={PlaceholderImage} style={styles.backgroundImage} />
-        <View style={styles.overlay} />
-      </View>
+      <Image source={PlaceholderImage} style={styles.backgroundImage} />
+      <View style={styles.overlay} />
       
-      <View style={styles.content}>
-        <Animated.View style={[styles.spinner, animatedStyle]}>
-          <View style={styles.spinnerInner} />
-        </Animated.View>
-        
-        <Text style={styles.title}>Planner</Text>
-        <Text style={styles.subtitle}>Loading your experience...</Text>
-      </View>
+      {/* Welcome Text */}
+      <Animated.View style={[styles.welcomeContainer, welcomeAnimatedStyle]}>
+        <Text style={styles.welcomeText}>Welcome to your planner</Text>
+      </Animated.View>
+
+      {/* Icons */}
+      <Animated.View style={[styles.iconsContainer, iconsAnimatedStyle]}>
+        <View style={styles.iconRow}>
+          <View style={styles.iconItem}>
+            <View style={styles.iconCircle}>
+              <Ionicons name="calendar" size={32} color="#ffd33d" />
+            </View>
+            <Text style={styles.iconLabel}>Monthly</Text>
+          </View>
+          
+          <View style={styles.iconItem}>
+            <View style={styles.iconCircle}>
+              <Ionicons name="calendar-outline" size={32} color="#ffd33d" />
+            </View>
+            <Text style={styles.iconLabel}>Weekly</Text>
+          </View>
+        </View>
+
+        <View style={styles.iconRow}>
+          <View style={styles.iconItem}>
+            <View style={styles.iconCircle}>
+              <Ionicons name="today" size={32} color="#ffd33d" />
+            </View>
+            <Text style={styles.iconLabel}>Daily</Text>
+          </View>
+          
+          <View style={styles.iconItem}>
+            <View style={styles.iconCircle}>
+              <Ionicons name="list" size={32} color="#ffd33d" />
+            </View>
+            <Text style={styles.iconLabel}>Tasks</Text>
+          </View>
+        </View>
+
+        <View style={styles.iconRow}>
+          <View style={styles.iconItem}>
+            <View style={styles.iconCircle}>
+              <Ionicons name="notifications" size={32} color="#ffd33d" />
+            </View>
+            <Text style={styles.iconLabel}>Reminders</Text>
+          </View>
+          
+          <View style={styles.iconItem}>
+            <View style={styles.iconCircle}>
+              <Ionicons name="settings" size={32} color="#ffd33d" />
+            </View>
+            <Text style={styles.iconLabel}>Settings</Text>
+          </View>
+        </View>
+      </Animated.View>
     </View>
   );
 }
@@ -65,17 +137,13 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#25292e',
   },
-  imageContainer: {
+  backgroundImage: {
     position: 'absolute',
     top: 0,
     left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  backgroundImage: {
-    width: '100%',
-    height: '100%',
-    opacity: 0.3,
+    width: width,
+    height: height,
+    resizeMode: 'cover',
   },
   overlay: {
     position: 'absolute',
@@ -84,43 +152,62 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     backgroundColor: '#25292e',
-    opacity: 0.8,
+    opacity: 0.7,
   },
-  content: {
+  welcomeContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    zIndex: 1,
+    paddingHorizontal: 40,
   },
-  spinner: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
-    borderWidth: 4,
-    borderColor: 'transparent',
-    borderTopColor: '#ffd33d',
-    marginBottom: 30,
-  },
-  spinnerInner: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    borderBottomColor: '#ffd33d',
-    opacity: 0.5,
-  },
-  title: {
-    fontSize: 32,
+  welcomeText: {
+    fontSize: 36,
     fontWeight: 'bold',
     color: '#fff',
-    marginBottom: 10,
     textAlign: 'center',
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 2 },
+    textShadowRadius: 4,
   },
-  subtitle: {
-    fontSize: 16,
-    color: '#ccc',
+  iconsContainer: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    justifyContent: 'center',
+    alignItems: 'center',
+    paddingHorizontal: 40,
+  },
+  iconRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: '100%',
+    marginVertical: 20,
+  },
+  iconItem: {
+    alignItems: 'center',
+    flex: 1,
+    marginHorizontal: 10,
+  },
+  iconCircle: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: 'rgba(255, 211, 61, 0.1)',
+    borderWidth: 2,
+    borderColor: '#ffd33d',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,
+  },
+  iconLabel: {
+    color: '#fff',
+    fontSize: 14,
+    fontWeight: '600',
     textAlign: 'center',
-    opacity: 0.8,
+    textShadowColor: 'rgba(0, 0, 0, 0.5)',
+    textShadowOffset: { width: 0, height: 1 },
+    textShadowRadius: 2,
   },
 });

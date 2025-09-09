@@ -6,10 +6,10 @@ import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 
 export default function RootLayout() {
   useFrameworkReady();
-  const isLoading = useAppLoading();
+  const { isLoading, finishLoading } = useAppLoading();
 
   if (isLoading) {
-    return <Preloader />;
+    return <Preloader onFinish={finishLoading} />;
   }
 
   return <Stack>
