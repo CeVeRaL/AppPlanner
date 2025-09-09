@@ -1,9 +1,11 @@
 import { Stack } from "expo-router";
 import { StatusBar } from "expo-status-bar";
 import { useAppLoading } from "@/hooks/useAppLoading";
-import Preloader from "@/components/Preloader";
+import Preloader from "@/components/Preloader"
+import { useFrameworkReady } from '@/hooks/useFrameworkReady';
 
 export default function RootLayout() {
+  useFrameworkReady();
   const isLoading = useAppLoading();
 
   if (isLoading) {
