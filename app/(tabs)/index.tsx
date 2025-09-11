@@ -65,11 +65,6 @@ export default function HomeScreen() {
         </View>
         <View style={styles.rightSpacer} />
       </View>
-          <View style={styles.girlSticker}>
-            <Image source={GirlImage} style={styles.girlImage} />
-          </View>
-        </View>
-      </View>
 
       {/* Main Icons Grid */}
       <View style={styles.iconsContainer}>
