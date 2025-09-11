@@ -12,6 +12,7 @@ import { Ionicons } from '@expo/vector-icons';
 import MiniCalendar from '@/components/MiniCalendar';
 
 const PlaceholderImage = require("../../assets/images/white2.jpg");
+const GirlImage = require("../../assets/images/Девушка.jpg");
 const { width, height } = Dimensions.get('window');
 
 export default function HomeScreen() {
@@ -57,8 +58,7 @@ export default function HomeScreen() {
         </View>
         <View style={styles.stickerContainer}>
           <View style={styles.girlSticker}>
-            <Text style={styles.stickerEmoji}>👩‍💼</Text>
-            <Text style={styles.stickerText}>Let's Plan!</Text>
+            <Image source={GirlImage} style={styles.girlImage} />
           </View>
         </View>
       </View>
@@ -139,40 +139,36 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    justifyContent: 'space-between',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
-    paddingTop: 60,
+    paddingTop: 20,
     marginBottom: 40,
   },
   calendarContainer: {
-    alignSelf: 'flex-start',
+    flex: 1,
+    marginRight: 20,
   },
   stickerContainer: {
-    flex: 1,
-    alignItems: 'flex-end',
+    width: 120,
+    height: 120,
   },
   girlSticker: {
-    backgroundColor: 'rgba(255, 211, 61, 0.2)',
+    width: '100%',
+    height: '100%',
     borderRadius: 20,
-    padding: 12,
-    alignItems: 'center',
     borderWidth: 2,
     borderColor: '#ffd33d',
     shadowColor: '#ffd33d',
     shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.3,
     shadowRadius: 8,
+    overflow: 'hidden',
   },
-  stickerEmoji: {
-    fontSize: 32,
-    marginBottom: 4,
-  },
-  stickerText: {
-    color: '#ffd33d',
-    fontSize: 12,
-    fontWeight: 'bold',
-    textAlign: 'center',
+  girlImage: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
   },
   iconsContainer: {
     flex: 1,
