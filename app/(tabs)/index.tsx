@@ -139,17 +139,18 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-start',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
     paddingTop: 60,
     marginBottom: 40,
   },
   calendarContainer: {
-    flex: 0,
+    alignSelf: 'flex-start',
   },
   stickerContainer: {
-    flex: 0,
+    flex: 1,
+    alignItems: 'flex-end',
   },
   girlSticker: {
     backgroundColor: 'rgba(255, 211, 61, 0.2)',
