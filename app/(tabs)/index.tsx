@@ -53,10 +53,18 @@ export default function HomeScreen() {
       
       {/* Top Section with Calendar and Girl Sticker */}
       <View style={styles.topSection}>
-        <View style={styles.calendarContainer}>
-          <MiniCalendar />
+        <View style={styles.leftColumn}>
+          <View style={styles.stickerContainer}>
+            <View style={styles.girlSticker}>
+              <Image source={GirlImage} style={styles.girlImage} />
+            </View>
+          </View>
+          <View style={styles.calendarContainer}>
+            <MiniCalendar />
+          </View>
         </View>
-        <View style={styles.stickerContainer}>
+        <View style={styles.rightSpacer} />
+      </View>
           <View style={styles.girlSticker}>
             <Image source={GirlImage} style={styles.girlImage} />
           </View>
@@ -139,24 +147,32 @@ const styles = StyleSheet.create({
   },
   topSection: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'center',
     alignItems: 'flex-start',
     paddingHorizontal: 20,
-    paddingTop: 20,
-    marginBottom: 40,
+    paddingTop: 60,
+    marginBottom: 60,
+  },
+  leftColumn: {
+    flex: 1,
+    alignItems: 'flex-start',
   },
   calendarContainer: {
-    flex: 1,
-    marginRight: 20,
+    width: '100%',
+    marginTop: 15,
   },
   stickerContainer: {
-    width: 120,
-    height: 120,
+    width: 100,
+    height: 100,
+    marginBottom: 10,
+  },
+  rightSpacer: {
+    flex: 1,
   },
   girlSticker: {
     width: '100%',
     height: '100%',
-    borderRadius: 20,
+    borderRadius: 15,
     borderWidth: 2,
     borderColor: '#ffd33d',
     shadowColor: '#ffd33d',

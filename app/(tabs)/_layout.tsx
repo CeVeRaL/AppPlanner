@@ -19,7 +19,7 @@ export default function TabLayout() {
       <Tabs.Screen 
         name="index" 
         options={{
-          headerTitle : "Planner",
+          headerTitle : "",
           // иконка домик подсвечивает когда активна
           tabBarIcon: ({focused, color}) => ( 
           <Ionicons 
